@@ -49,12 +49,27 @@ export async function scrapedAmazonProduct(url: string) {
       .first()
       .text()
       .replace(/[-%]/g, "");
-    const stars = $("#acrPopover > span.a-declarative > a > span")
+    const stars = $(
+      "#acrPopover > span.a-declarative > a > i.a-icon.a-icon-star.a-star-4-5.cm-cr-review-stars-spacing-big"
+    )
       .first()
       .text()
-      .trim();
-    const reviewCount = $("#acrCustomerReviewText").first().text().trim();
+      .split(" ")
+      .at(0);
+    const reviewsCount = $(
+      "#cm_cr_dp_d_rating_histogram > div.a-row.a-spacing-medium.averageStarRatingNumerical > span"
+    )
+      .first()
+      .text()
+      .split(" ")
+      .at(0);
+
     const description = extractDescription($);
+    const category = $(
+      "#wayfinding-breadcrumbs_feature_div > ul > li:nth-child(7) > span > a"
+    )
+      .text()
+      .trim();
     // construct data objects with scraped information
     const data = {
       url,
@@ -63,16 +78,16 @@ export async function scrapedAmazonProduct(url: string) {
       title,
       currentPrice: Number(currentPrice) || Number(originalPrice),
       originalPrice: Number(originalPrice) || Number(currentPrice),
-      priceHistory: [],
-      discountRate: Number(discountRate),
-      isOutOfStock: outOfStock,
-      category: "category",
-      stars,
-      reviewCount,
-      description,
+      priceHistory: Array(),
       lowestPrice: Number(currentPrice) || Number(originalPrice),
       highestPrice: Number(originalPrice) || Number(currentPrice),
       averagePrice: Number(currentPrice),
+      discountRate: Number(discountRate),
+      description,
+      category,
+      reviewsCount,
+      stars,
+      isOutOfStock: outOfStock,
     };
     return data;
   } catch (error: any) {

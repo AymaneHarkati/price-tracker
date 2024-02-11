@@ -6,7 +6,7 @@ export type User = {
   email: string;
 };
 
-export type Product = {
+export type ProductTypes = {
   _id?: string;
   url: string;
   currency: string;
@@ -21,8 +21,8 @@ export type Product = {
   discountRate: number;
   description: string;
   category: string;
-  reviewsCount: number;
-  stars: number;
+  reviewsCount: string;
+  stars: string;
   isOutOfStock: Boolean;
   users?: User[];
 };
