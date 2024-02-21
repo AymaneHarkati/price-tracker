@@ -9,7 +9,8 @@ import {
   getLowestPrice,
 } from "../scraper/utils";
 import { scrapedAmazonProduct } from "../scraper";
-import { ProductTypes } from "@/types";
+import { ProductTypes, User } from "@/types";
+import { generateEmailBody, sendEmail } from "../nodemailer";
 
 export async function scrapeAndStoreProduct(productUrl: string) {
   if (!productUrl) return;
@@ -71,6 +72,28 @@ export async function getProductByCategory(productID: string) {
       category: product.category,
     }).limit(3);
     return sameCategoryProducts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function addUserEmailToProduct(
+  productID: string,
+  userEmail: string
+) {
+  try {
+    // Send our first email
+    const product = await Product.findById(productID);
+    if (!product) return null;
+    const userExists = product.users.some(
+      (user: User) => user.email === userEmail
+    );
+    if (!userExists) {
+      product.users.push({ email: userEmail });
+      await product.save();
+      const emailContent = await generateEmailBody(product, "WELCOME");
+      await sendEmail(emailContent, [userEmail]);
+    }
   } catch (error) {
     console.log(error);
   }

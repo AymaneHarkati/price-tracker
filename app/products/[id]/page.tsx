@@ -7,6 +7,7 @@ import Link from "next/link";
 import { formatNumber } from "@/lib/scraper/utils";
 import PriceInfoCard from "@/components/priceinfocard";
 import Card from "@/components/card";
+import Modal from "@/components/modal";
 type Props = {
   params: {
     id: string;
@@ -15,7 +16,6 @@ type Props = {
 const ProductPage = async ({ params: { id } }: Props) => {
   const product: ProductTypes = await getProductById(id);
   if (!product) redirect("/");
-  console.log(product.reviewsCount);
   const sameProduct: Array<ProductTypes> =
     (await getProductByCategory(id)) ?? [];
   return (
@@ -147,7 +147,7 @@ const ProductPage = async ({ params: { id } }: Props) => {
               />
             </div>
           </div>
-          Modal
+          <Modal productID={id} />
         </div>
       </div>
       <div className="flex flex-col gap-16">
